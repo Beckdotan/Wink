@@ -52,6 +52,7 @@ public class PhotoActivity extends AppCompatActivity {
 
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
+    FirebaseStorage storage;
 
 
     @Override
@@ -69,7 +70,9 @@ public class PhotoActivity extends AppCompatActivity {
         mImageTitel = findViewById(R.id.image_titel_text);
         mImageView = findViewById(R.id.image_view);
         mProgressBar = findViewById(R.id.progress_bar);
-        mStorageRef = FirebaseStorage.getInstance().getReference("uploads");
+
+        storage = FirebaseStorage.getInstance();
+        mStorageRef = storage.getReference("uploads");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
 
 
@@ -121,7 +124,7 @@ public class PhotoActivity extends AppCompatActivity {
     }
 
     //getting the file extension (.jpg / .png) and such.
-    private String getFileExtension(Uri uri ){
+    private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
@@ -131,11 +134,8 @@ public class PhotoActivity extends AppCompatActivity {
     private void uploadFile(){
         if (mImageUri != null){
             //uploading the image to storage with the name in milliseconds (thats how we use uniq name).
-
-
-
-
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()+ "." + getFileExtension(mImageUri));
+            String imgName = System.currentTimeMillis()+ "." + getFileExtension(mImageUri);
+            StorageReference fileReference = mStorageRef.child(imgName);
             //fileReference.putFile(mImageUri);
             Log.i("fileRef path:", fileReference.getPath());
 
@@ -143,8 +143,8 @@ public class PhotoActivity extends AppCompatActivity {
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            //after 5 seconds get the progress bur to 0 again.
 
+                            //Cosmetics - after 5 seconds get the progress bur to 0 again.
                             Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
                                 @Override
@@ -156,9 +156,19 @@ public class PhotoActivity extends AppCompatActivity {
 
                             Toast.makeText(PhotoActivity.this, "Upload was successful", Toast.LENGTH_LONG).show();
 
-                            //UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(),  fileReference.getDownloadUrl().toString());
-                            //String uploadID = mDatabaseRef.push().getKey();
-                            // mDatabaseRef.child(uploadID).setValue(upload);
+
+                            StorageReference imgReference = storage.getReference("uploads/"+ imgName);
+                            Log.e("TAG","onSuccess: " + imgReference);
+
+                            UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(), imgReference.toString());
+                            Log.e("Upload Image", "onSuccess: " + upload.GetImageUrl());
+                            String key = saveImageInDB(upload);
+                            /*
+                            String uploadID = mDatabaseRef.push().getKey();
+                             mDatabaseRef.child(uploadID).setValue(upload);
+
+
+                             */
 
 
 
@@ -184,6 +194,34 @@ public class PhotoActivity extends AppCompatActivity {
             Toast.makeText(this, "Please Select Image", Toast.LENGTH_LONG).show();
 
         }
+    }
+
+    //sending the Note to DB.
+    //if works - return the automatic key was given and send toast to user
+    //else return "0" as didnt happen.  and send toast to user.
+    public String saveImageInDB(UploadImage img) {
+        // Write a message to the database
+        Log.e("TAG", "saveImageInDB: ");
+        try {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference myRef = database.getReference("Images/").push();
+            //getting the new key from DB
+            String key = myRef.getKey();
+            //saving it for id in Note
+            img.SetImageName(key);
+            //sending to DB
+            myRef.setValue(img);
+            Log.i("saveNoteInDB", "saved in DB! :)");
+
+            /// !!!!!!!!!!!! ----- Can add the note id to the user notes list here ----- !!!!!!!!!
+
+            return key;
+        } catch (Error e) {
+            Log.e("saveNoteInDB", "didn't work");
+            return "0";
+        }
+
+
     }
 
 }
