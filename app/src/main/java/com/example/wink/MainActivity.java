@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
-    Button mCreatMessage;
+    Button mPhotoHistory;
     Button mPhotoActivity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,13 +18,13 @@ public class MainActivity extends AppCompatActivity {
         //cosmetics for splash screen
         getSupportActionBar().hide();
 
-        mCreatMessage = (Button) findViewById(R.id.button);
+        mPhotoHistory = (Button) findViewById(R.id.photoHistory);
         mPhotoActivity = (Button) findViewById(R.id.photo_activity);
 
-        mCreatMessage.setOnClickListener(new View.OnClickListener() {
+        mPhotoHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PhotoActivity.class);
+                Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
                 startActivity(intent);
             }
         });

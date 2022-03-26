@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "253224232928",
+    "firebase_url": "https://wink-e1b43-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "wink-e1b43",
     "storage_bucket": "wink-e1b43.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "253224232928-6shvf6v720s96esnpeuu2h5o4ii9pqd3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wink",
+            "certificate_hash": "266fc37f867d735b77e6c370251ae92ecc131b62"
+          }
+        },
         {
           "client_id": "253224232928-ff45ksr6jouvpbhp1hddjbmiv379asdt.apps.googleusercontent.com",
           "client_type": 3

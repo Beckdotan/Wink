@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
@@ -50,9 +51,9 @@ public class PhotoActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private Uri mImageUri;
 
+    private FirebaseStorage storage;
     private StorageReference mStorageRef;
-    private DatabaseReference mDatabaseRef;
-    FirebaseStorage storage;
+    private StorageTask mUploadTask;
 
 
     @Override
@@ -73,7 +74,7 @@ public class PhotoActivity extends AppCompatActivity {
 
         storage = FirebaseStorage.getInstance();
         mStorageRef = storage.getReference("uploads");
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
+     //   mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
 
 
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +95,12 @@ public class PhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.i( "PhotoActivity","clicked on buttonUpload");
-                uploadFile();
+                //checking if already uploading. if there is uplading procces keep doing it and dont do any more. else, upload.
+                if (mUploadTask != null && mUploadTask.isInProgress()){
+                    Toast.makeText(PhotoActivity.this, "Upload In Progress", Toast.LENGTH_SHORT).show();
+                }else {
+                    uploadFile();
+                }
             }
         });
     }
@@ -139,7 +145,7 @@ public class PhotoActivity extends AppCompatActivity {
             //fileReference.putFile(mImageUri);
             Log.i("fileRef path:", fileReference.getPath());
 
-            fileReference.putFile(mImageUri)
+            mUploadTask = fileReference.putFile(mImageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -156,21 +162,11 @@ public class PhotoActivity extends AppCompatActivity {
 
                             Toast.makeText(PhotoActivity.this, "Upload was successful", Toast.LENGTH_LONG).show();
 
-
+                            //creating the im url
                             StorageReference imgReference = storage.getReference("uploads/"+ imgName);
-                            Log.e("TAG","onSuccess: " + imgReference);
-
                             UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(), imgReference.toString());
-                            Log.e("Upload Image", "onSuccess: " + upload.GetImageUrl());
+                            Log.i("Upload Image", "onSuccess: " + upload.getImageUrl());
                             String key = saveImageInDB(upload);
-                            /*
-                            String uploadID = mDatabaseRef.push().getKey();
-                             mDatabaseRef.child(uploadID).setValue(upload);
-
-
-                             */
-
-
 
                         }
                     })
@@ -196,20 +192,21 @@ public class PhotoActivity extends AppCompatActivity {
         }
     }
 
-    //sending the Note to DB.
+    //sending the img to DB.
     //if works - return the automatic key was given and send toast to user
     //else return "0" as didnt happen.  and send toast to user.
     public String saveImageInDB(UploadImage img) {
+
         // Write a message to the database
-        Log.e("TAG", "saveImageInDB: ");
+        Log.i("TAG", "saveImageInDB: ");
         try {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            //getting refrense to firebase realtime db.
+            FirebaseDatabase database = FirebaseDatabase.getInstance("https://wink-e1b43-default-rtdb.europe-west1.firebasedatabase.app");
             DatabaseReference myRef = database.getReference("Images/").push();
             //getting the new key from DB
             String key = myRef.getKey();
-            //saving it for id in Note
-            img.SetImageName(key);
-            //sending to DB
+
+            //sending img to DB
             myRef.setValue(img);
             Log.i("saveNoteInDB", "saved in DB! :)");
 
@@ -221,7 +218,8 @@ public class PhotoActivity extends AppCompatActivity {
             return "0";
         }
 
-
     }
+
+
 
 }

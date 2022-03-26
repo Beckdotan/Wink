@@ -3,6 +3,7 @@ package com.example.wink;
 public class UploadImage {
     private String imageName;
     private String imageUrl;
+    private String id;
 
     public UploadImage() {
         //empty constructor.
@@ -16,8 +17,6 @@ public class UploadImage {
         imageName = name;
     }
 
-
-
     public UploadImage(String name, String URL){
         if (name.trim().equals("")){
             name = "NO NAME";
@@ -26,29 +25,43 @@ public class UploadImage {
         imageUrl = URL;
     }
 
+    public UploadImage(String name, String URL,String id){
+        if (name.trim().equals("")){
+            name = "NO NAME";
+        }
+        imageName = name;
+        imageUrl = URL;
+        this.id = id;
+    }
+
 
     //Getters
 
-    public String GetImageName(){
+    public String getImageName(){
         return imageName;
     }
 
-    public String GetImageUrl(){
+    public String getImageUrl(){
         return imageUrl;
+    }
+
+    public String getId() {
+        return id;
     }
 
     //Setters
 
-    public void SetImageName(String name){
+    public void setImageName(String name){
         imageName = name;
 
     }
 
-    public void SetImageUrl(String URL){
+    public void setImageUrl(String URL){
         imageUrl = URL;
     }
 
-
-
+    public void setId(String id) {
+        this.id = id;
+    }
 }
 
