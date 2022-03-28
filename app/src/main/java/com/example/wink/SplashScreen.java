@@ -6,10 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.google.firebase.storage.FirebaseStorage;
+
 public class SplashScreen extends AppCompatActivity {
 
     //handler for splashscreen
     Handler handler = new Handler();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,6 +1,7 @@
 package com.example.wink;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -18,6 +22,8 @@ public class HistoryActivityAdapter extends RecyclerView.Adapter<HistoryActivity
 
     private Context mContext;
     private List<UploadImage> mUploads;
+    public FirebaseStorage storage = FirebaseStorage.getInstance();
+    private  StorageReference storageRef = storage.getReference();
 
     public HistoryActivityAdapter(Context context, List<UploadImage> uploads){
         mContext = context;
@@ -36,11 +42,22 @@ public class HistoryActivityAdapter extends RecyclerView.Adapter<HistoryActivity
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         UploadImage uploadCurrent = mUploads.get(position);
         holder.textViewName.setText(uploadCurrent.getImageName());
+        //StorageReference gsReference = storage.getReferenceFromUrl(uploadCurrent.getImageUrl());
+        Glide.with(mContext)
+                .load(uploadCurrent.getImageUrl())
+                .into(holder.imageView);
+        /*
+
         Picasso.with(mContext)
                 .load(uploadCurrent.getImageUrl())
                 .fit()
                 .centerInside()
                 .into(holder.imageView);
+
+         */
+
+
+
     }
 
     @Override

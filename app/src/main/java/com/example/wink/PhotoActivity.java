@@ -54,6 +54,7 @@ public class PhotoActivity extends AppCompatActivity {
     private FirebaseStorage storage;
     private StorageReference mStorageRef;
     private StorageTask mUploadTask;
+    public String ImgURL;
 
 
     @Override
@@ -162,11 +163,36 @@ public class PhotoActivity extends AppCompatActivity {
 
                             Toast.makeText(PhotoActivity.this, "Upload was successful", Toast.LENGTH_LONG).show();
 
-                            //creating the im url
+
+                            // --------------    FIRST WAY     -------------
+
+                            /*
+                            //- creating gs url: for exsample:
+                             //creating the im url
                             StorageReference imgReference = storage.getReference("uploads/"+ imgName);
-                            UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(), imgReference.toString());
+                             UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(), imgReference.toString());
                             Log.i("Upload Image", "onSuccess: " + upload.getImageUrl());
-                            String key = saveImageInDB(upload);
+                             */
+
+                            // ---------------   SECOND WAY    ---------
+                            //creating the real url
+                            StorageReference imgReference = storage.getReference("uploads/"+ imgName);
+
+                            //getting the download url
+                            imgReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Log.i("getDownloadURL", "onSuccess: Download URL" + uri.toString());
+                                    ImgURL = uri.toString();
+                                    UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(), ImgURL);
+                                    Log.i("Upload Image", "onSuccess: " + ImgURL);
+                                    String key = saveImageInDB(upload);
+                                }
+                            });
+
+
+
+
 
                         }
                     })
