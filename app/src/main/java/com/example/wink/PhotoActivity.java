@@ -189,11 +189,6 @@ public class PhotoActivity extends AppCompatActivity {
                                     String key = saveImageInDB(upload);
                                 }
                             });
-
-
-
-
-
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

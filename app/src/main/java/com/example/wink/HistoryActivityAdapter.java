@@ -43,21 +43,22 @@ public class HistoryActivityAdapter extends RecyclerView.Adapter<HistoryActivity
         UploadImage uploadCurrent = mUploads.get(position);
         holder.textViewName.setText(uploadCurrent.getImageName());
         //StorageReference gsReference = storage.getReferenceFromUrl(uploadCurrent.getImageUrl());
+
+        // ---------------- WAY 1 USING GLIDE   -------------//
+        //Glie is open source code for firebase. being used in firebase documentation.
         Glide.with(mContext)
                 .load(uploadCurrent.getImageUrl())
                 .into(holder.imageView);
-        /*
 
+        /*
+        // ----------------------------    SECOND WAY - USING PICASSO    ----------- //
+        // working perfectly as well. picasso was used to present the photo from the phone to the screen.
         Picasso.with(mContext)
                 .load(uploadCurrent.getImageUrl())
                 .fit()
                 .centerInside()
                 .into(holder.imageView);
-
          */
-
-
-
     }
 
     @Override
