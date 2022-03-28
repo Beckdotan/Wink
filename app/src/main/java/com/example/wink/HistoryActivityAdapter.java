@@ -29,7 +29,6 @@ public class HistoryActivityAdapter extends RecyclerView.Adapter<HistoryActivity
     @Override
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
        View v = LayoutInflater.from(mContext).inflate(R.layout.image_item, parent, false);
-
         return new ImageViewHolder(v);
     }
 
@@ -42,7 +41,6 @@ public class HistoryActivityAdapter extends RecyclerView.Adapter<HistoryActivity
                 .fit()
                 .centerInside()
                 .into(holder.imageView);
-
     }
 
     @Override
@@ -56,9 +54,8 @@ public class HistoryActivityAdapter extends RecyclerView.Adapter<HistoryActivity
 
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
-
             textViewName = itemView.findViewById(R.id.text_view_name);
-            itemView = itemView.findViewById(R.id.image_view_upload);
+            imageView = itemView.findViewById(R.id.image_view_upload);
 
         }
     }
