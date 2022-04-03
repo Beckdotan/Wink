@@ -6,11 +6,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.Blob;
@@ -54,11 +56,21 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
 
     String addImg(String key, UploadImage uploadImage){
 
-        /*
+
         //creating byte[] form url
         ImageLoader imageLoader = ImageLoader.getInstance();
-        Bitmap bmp = imageLoader.loadImageSync(uploadImage.getImageUrl());
-        byte[] img = getBytesFromBitmap(bmp);
+
+        // Load image, decode it to Bitmap and return Bitmap to callback
+         /*
+        imageLoader.loadImage(uploadImage.getImageUrl(), new SimpleImageLoadingListener() {
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                // Do whatever you want with Bitmap
+                byte[] img = getBytesFromBitmap(loadedImage);
+
+            }
+        });
+
 
 
          */
