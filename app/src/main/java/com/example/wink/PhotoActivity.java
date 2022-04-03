@@ -160,8 +160,8 @@ public class PhotoActivity extends AppCompatActivity {
                                 }
                             }, 5000);
 
-
-                            Toast.makeText(PhotoActivity.this, "Upload was successful", Toast.LENGTH_LONG).show();
+                            //for debugging no need for it because after we saving in realtime db we are sending the message.
+                            //Toast.makeText(PhotoActivity.this, "Upload was successful", Toast.LENGTH_LONG).show();
 
 
                             // --------------    FIRST WAY     -------------
@@ -186,7 +186,15 @@ public class PhotoActivity extends AppCompatActivity {
                                     ImgURL = uri.toString();
                                     UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(), ImgURL);
                                     Log.i("Upload Image", "onSuccess: " + ImgURL);
+                                   //saving the Image and matadata to realtime DB
                                     String key = saveImageInDB(upload);
+
+                                    //if in realtime DB:
+                                    if (key == "0"){
+                                        Toast.makeText(PhotoActivity.this, "Upload was NOT successful", Toast.LENGTH_LONG).show();
+                                    } else{
+                                        Toast.makeText(PhotoActivity.this, "SAVED IN DB", Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
                         }

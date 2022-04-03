@@ -34,7 +34,6 @@ public class UploadImage {
         this.id = id;
     }
 
-
     //Getters
 
     public String getImageName(){
@@ -50,7 +49,6 @@ public class UploadImage {
     }
 
     //Setters
-
     public void setImageName(String name){
         imageName = name;
 
