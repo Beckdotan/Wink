@@ -56,7 +56,9 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
 
     String addImg(String key, UploadImage uploadImage){
 
-
+        //using this API https://github.com/nostra13/Android-Universal-Image-Loader
+        //TODO:
+        //look at public url here: https://www.sentinelstand.com/article/guide-to-firebase-storage-download-urls-tokens
         //creating byte[] form url
         ImageLoader imageLoader = ImageLoader.getInstance();
 
