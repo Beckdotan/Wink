@@ -1,12 +1,22 @@
 package com.example.wink;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.io.ByteArrayOutputStream;
+import java.sql.Blob;
+
 public class SQLiteDBHelper extends SQLiteOpenHelper {
+    private static final String TAG = "LOCAL DB: ";
     private Context context;
     public static final String DATABASE_NAME = "WinksDB.db";
     public static final int DATABASE_VERSION = 1;
@@ -16,6 +26,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_TITLE = "img_title";
     public static final String COLUMN_LINK = "img_link";
     public static final String COLUMN_SHOWED = "was_showed"; // will be 0 for no and 1 for yes.
+    public static final String IMG  = "img";
 
     public SQLiteDBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -28,6 +39,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
                         " (" + COLUMN_ID + " TEXT, " +
                         COLUMN_TITLE +  " TEXT, " +
                         COLUMN_LINK +  " TEXT, " +
+                        IMG + " BLOB, " +
                         COLUMN_SHOWED + " INTEGER);";
         db.execSQL(query);
     }
@@ -38,4 +50,46 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         onCreate(db);
 
     }
+
+
+    String addImg(String key, UploadImage uploadImage){
+
+        /*
+        //creating byte[] form url
+        ImageLoader imageLoader = ImageLoader.getInstance();
+        Bitmap bmp = imageLoader.loadImageSync(uploadImage.getImageUrl());
+        byte[] img = getBytesFromBitmap(bmp);
+
+
+         */
+
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_ID, key);
+        cv.put(COLUMN_TITLE, uploadImage.getImageName());
+        cv.put(COLUMN_LINK, uploadImage.getImageUrl());
+        cv.put(COLUMN_SHOWED, uploadImage.getWasShown());
+        //cv.put(IMG, img);
+
+        long result = db.insert(TABLE_NAME,null, cv);
+        if (result == -1){
+            Log.e(TAG, "addImg: FAILED TO SAVE IMG");
+            return "0";
+        }else{
+            Log.i(TAG, "addImg: Img was saved to local db");
+            return key;
+        }
+    }
+
+    public static byte[] getBytesFromBitmap(Bitmap bitmap) {
+        if (bitmap!=null) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+            return stream.toByteArray();
+        }
+        return null;
+    }
+
 }

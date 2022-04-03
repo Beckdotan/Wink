@@ -4,6 +4,7 @@ public class UploadImage {
     private String imageName;
     private String imageUrl;
     private String id;
+    private int wasShown;
 
     public UploadImage() {
         //empty constructor.
@@ -15,6 +16,7 @@ public class UploadImage {
             name = "NO NAME";
         }
         imageName = name;
+        wasShown = 0;
     }
 
     public UploadImage(String name, String URL){
@@ -23,6 +25,7 @@ public class UploadImage {
         }
         imageName = name;
         imageUrl = URL;
+        wasShown = 0;
     }
 
     public UploadImage(String name, String URL,String id){
@@ -31,6 +34,7 @@ public class UploadImage {
         }
         imageName = name;
         imageUrl = URL;
+        wasShown = 0;
         this.id = id;
     }
 
@@ -48,6 +52,10 @@ public class UploadImage {
         return id;
     }
 
+    public int getWasShown() {
+        return wasShown;
+    }
+
     //Setters
     public void setImageName(String name){
         imageName = name;
@@ -60,6 +68,10 @@ public class UploadImage {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public void setWasShown(int was_shown){
+        this.wasShown = was_shown;
     }
 }
 

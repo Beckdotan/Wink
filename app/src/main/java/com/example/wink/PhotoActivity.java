@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -190,10 +192,15 @@ public class PhotoActivity extends AppCompatActivity {
                                     String key = saveImageInDB(upload);
 
                                     //if in realtime DB:
-                                    if (key == "0"){
+                                    if (key == "0"){ // if failed in DB
                                         Toast.makeText(PhotoActivity.this, "Upload was NOT successful", Toast.LENGTH_LONG).show();
-                                    } else{
+                                    } else{ //if success in realtime DB
                                         Toast.makeText(PhotoActivity.this, "SAVED IN DB", Toast.LENGTH_LONG).show();
+
+                                        //adding it to local DB:
+                                        SQLiteDBHelper myDB = new SQLiteDBHelper(PhotoActivity.this);
+                                        myDB.addImg(key, upload);
+
                                     }
                                 }
                             });
@@ -248,6 +255,7 @@ public class PhotoActivity extends AppCompatActivity {
         }
 
     }
+
 
 
 
