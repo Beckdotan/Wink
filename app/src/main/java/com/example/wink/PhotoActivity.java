@@ -45,6 +45,9 @@ public class PhotoActivity extends AppCompatActivity {
     //using this videos:
     //https://www.youtube.com/watch?v=MfCiiTEwt3g&list=PLrnPJCHvNZuB_7nB5QD-4bNg6tpdEUImQ
 
+
+
+
     private static final int PICK_IMAGE_REQUEST =1;
     private Button mButtonChooseImage;
     private Button mButtonUpload;
@@ -57,6 +60,9 @@ public class PhotoActivity extends AppCompatActivity {
     private StorageReference mStorageRef;
     private StorageTask mUploadTask;
     public String ImgURL;
+
+
+
 
 
     @Override
@@ -169,13 +175,14 @@ public class PhotoActivity extends AppCompatActivity {
                             // --------------    FIRST WAY     -------------
 
                             /*
-                            //- creating gs url: for exsample:
+                            //- creating gs url: for example:
                              //creating the im url
                             StorageReference imgReference = storage.getReference("uploads/"+ imgName);
                              UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(), imgReference.toString());
                             Log.i("Upload Image", "onSuccess: " + upload.getImageUrl());
                              */
 
+                            /*
                             // ---------------   SECOND WAY    ---------
                             //creating the real url
                             StorageReference imgReference = storage.getReference("uploads/"+ imgName);
@@ -204,14 +211,31 @@ public class PhotoActivity extends AppCompatActivity {
                                     }
                                 }
                             });
+
+                             */
+
+                            // ----- Third Way ------ //
+                            UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(),  fileReference.getPath());
+                            Log.i("Upload Image", "onSuccess: " + ImgURL);
+                            //saving the Image and matadata to realtime DB
+                            String key = saveImageInDB(upload);
+
+                            //if in realtime DB:
+                            if (key == "0"){ // if failed in DB
+                                Toast.makeText(PhotoActivity.this, "Upload was NOT successful", Toast.LENGTH_LONG).show();
+                            } else { //if success in realtime DB
+                                Toast.makeText(PhotoActivity.this, "SAVED IN DB", Toast.LENGTH_LONG).show();
+
+                                //adding it to local DB:
+                                SQLiteDBHelper myDB = new SQLiteDBHelper(PhotoActivity.this);
+                                myDB.addImg(key, upload);
+                            }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(PhotoActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-
-
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -255,7 +279,6 @@ public class PhotoActivity extends AppCompatActivity {
         }
 
     }
-
 
 
 

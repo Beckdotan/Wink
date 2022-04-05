@@ -2,7 +2,8 @@ package com.example.wink;
 
 public class UploadImage {
     private String imageName;
-    private String imageUrl;
+    private String imagePath;
+    private String imageURL;
     private String id;
     private int wasShown;
 
@@ -19,21 +20,23 @@ public class UploadImage {
         wasShown = 0;
     }
 
-    public UploadImage(String name, String URL){
+    public UploadImage(String name, String path){
         if (name.trim().equals("")){
             name = "NO NAME";
         }
         imageName = name;
-        imageUrl = URL;
+        imagePath = path;
+        imageURL = "https://storage.googleapis.com/wink-e1b43.appspot.com"+path;
         wasShown = 0;
     }
 
-    public UploadImage(String name, String URL,String id){
+    public UploadImage(String name, String path,String id){
         if (name.trim().equals("")){
             name = "NO NAME";
         }
         imageName = name;
-        imageUrl = URL;
+        imagePath = path;
+        imageURL = "https://storage.googleapis.com/wink-e1b43.appspot.com"+path;
         wasShown = 0;
         this.id = id;
     }
@@ -45,7 +48,11 @@ public class UploadImage {
     }
 
     public String getImageUrl(){
-        return imageUrl;
+        return imageURL;
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 
     public String getId() {
@@ -62,8 +69,8 @@ public class UploadImage {
 
     }
 
-    public void setImageUrl(String URL){
-        imageUrl = URL;
+    public void setImagePath(String path){
+        imagePath = path;
     }
 
     public void setId(String id) {
