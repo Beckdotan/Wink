@@ -171,8 +171,25 @@ public class PhotoActivity extends AppCompatActivity {
                             //for debugging no need for it because after we saving in realtime db we are sending the message.
                             //Toast.makeText(PhotoActivity.this, "Upload was successful", Toast.LENGTH_LONG).show();
 
+                            // --------------    FIRST WORKING WAY    -------------
+                            UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(),  fileReference.getPath());
+                            Log.i("Upload Image", "onSuccess: " + ImgURL);
+                            //saving the Image and matadata to realtime DB
+                            String key = saveImageInDB(upload);
 
-                            // --------------    FIRST WAY     -------------
+                            //if in realtime DB:
+                            if (key == "0"){ // if failed in DB
+                                Toast.makeText(PhotoActivity.this, "Upload was NOT successful", Toast.LENGTH_LONG).show();
+                            } else { //if success in realtime DB
+                                Toast.makeText(PhotoActivity.this, "SAVED IN DB", Toast.LENGTH_LONG).show();
+
+                                //adding it to local DB:
+                                SQLiteDBHelper myDB = new SQLiteDBHelper(PhotoActivity.this);
+                                myDB.addImg(key, upload);
+                            }
+
+
+                            // --------------    SECOND WAY    -------------
 
                             /*
                             //- creating gs url: for example:
@@ -183,7 +200,7 @@ public class PhotoActivity extends AppCompatActivity {
                              */
 
                             /*
-                            // ---------------   SECOND WAY    ---------
+                            // ---------------   OTHER WAY    ---------
                             //creating the real url
                             StorageReference imgReference = storage.getReference("uploads/"+ imgName);
 
@@ -214,22 +231,7 @@ public class PhotoActivity extends AppCompatActivity {
 
                              */
 
-                            // ----- Third Way ------ //
-                            UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(),  fileReference.getPath());
-                            Log.i("Upload Image", "onSuccess: " + ImgURL);
-                            //saving the Image and matadata to realtime DB
-                            String key = saveImageInDB(upload);
 
-                            //if in realtime DB:
-                            if (key == "0"){ // if failed in DB
-                                Toast.makeText(PhotoActivity.this, "Upload was NOT successful", Toast.LENGTH_LONG).show();
-                            } else { //if success in realtime DB
-                                Toast.makeText(PhotoActivity.this, "SAVED IN DB", Toast.LENGTH_LONG).show();
-
-                                //adding it to local DB:
-                                SQLiteDBHelper myDB = new SQLiteDBHelper(PhotoActivity.this);
-                                myDB.addImg(key, upload);
-                            }
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

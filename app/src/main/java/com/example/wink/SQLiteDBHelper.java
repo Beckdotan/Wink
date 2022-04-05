@@ -20,6 +20,10 @@ import java.io.ByteArrayOutputStream;
 import java.sql.Blob;
 
 public class SQLiteDBHelper extends SQLiteOpenHelper {
+
+
+
+    //for DB purpeses.
     private static final String TAG = "LOCAL DB: ";
     private Context context;
     public static final String DATABASE_NAME = "WinksDB.db";
@@ -31,9 +35,15 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_LINK = "img_link";
     public static final String COLUMN_SHOWED = "was_showed"; // will be 0 for no and 1 for yes.
     public static final String IMG  = "img";
-    byte[] currentImg;
-    public SQLiteDBHelper thisContext = this;
 
+    //other things
+
+    public SQLiteDBHelper thisContext = this;
+    public int ImgHeight = 1000;
+    public int ImgWidth = 2000;
+
+
+    //constructor
     public SQLiteDBHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
@@ -64,38 +74,34 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
     public String addImg(String key, UploadImage uploadImage){
 
         //using this API https://github.com/nostra13/Android-Universal-Image-Loader
-        //TODO:
-        //look at public url here: https://www.sentinelstand.com/article/guide-to-firebase-storage-download-urls-tokens
-        //creating byte[] form url
 
         // Create global configuration and initialize ImageLoader with this config
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).build();
         ImageLoader.getInstance().init(config);
 
         ImageLoader imageLoader = ImageLoader.getInstance();
-        ImageSize targetSize = new ImageSize(2000, 1000);
+        ImageSize targetSize = new ImageSize(ImgWidth, ImgHeight);
 
         // Load image, decode it to Bitmap and return Bitmap to callback
-        // https://images.immediate.co.uk/production/volatile/sites/4/2021/08/mountains-7ddde89.jpg?quality=90&resize=768,574
-
-        // https://storage.googleapis.com/wink-e1b43.appspot.com/uploads/1648465513369.jpg
-
          imageLoader.loadImage(uploadImage.getImageUrl(), targetSize, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 // Do whatever you want with Bitmap
+                byte[] currentImg;
                 currentImg = getBytesFromBitmap(loadedImage);
                 Log.i(TAG, "onLoadingComplete: Created byte[] from img");
 
+                //adding to local DB
                 SQLiteDatabase db = thisContext.getWritableDatabase();
                 ContentValues cv = new ContentValues();
-
+                //adding vals to cv
                 cv.put(COLUMN_ID, key);
                 cv.put(COLUMN_TITLE, uploadImage.getImageName());
                 cv.put(COLUMN_LINK, uploadImage.getImageUrl());
                 cv.put(COLUMN_SHOWED, uploadImage.getWasShown());
                 cv.put(IMG, currentImg);
 
+                //checking if succeeded.
                 long result = db.insert(TABLE_NAME,null, cv);
                 if (result == -1){
                     Log.e(TAG, "addImg: FAILED TO SAVE IMG");
@@ -104,6 +110,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
                 }
             }
         });
+         //TODO: to the caller for this function there is no way knowing if this didn't succeed for now. need to add that.
         Log.i(TAG, key);
         return key;
     }

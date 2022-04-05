@@ -7,6 +7,11 @@ public class UploadImage {
     private String id;
     private int wasShown;
 
+
+
+
+
+
     public UploadImage() {
         //empty constructor.
     }
