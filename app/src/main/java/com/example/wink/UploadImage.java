@@ -85,5 +85,7 @@ public class UploadImage {
     public void setWasShown(int was_shown){
         this.wasShown = was_shown;
     }
+
+
 }
 

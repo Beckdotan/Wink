@@ -1,7 +1,8 @@
 package com.example.wink;
 
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,70 +12,71 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
+import java.nio.ByteBuffer;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class HistoryActivityAdapter extends RecyclerView.Adapter<HistoryActivityAdapter.ImageViewHolder> {
+public class HistoryActivityAdapter extends RecyclerView.Adapter<HistoryActivityAdapter.MyViewHolder> {
 
     private Context mContext;
-    private List<UploadImage> mUploads;
-    public FirebaseStorage storage = FirebaseStorage.getInstance();
-    private  StorageReference storageRef = storage.getReference();
+    private ArrayList<String> imgName;
+    private ArrayList<byte[]> imgByte;
 
-    public HistoryActivityAdapter(Context context, List<UploadImage> uploads){
-        mContext = context;
-        mUploads = uploads;
-
+    //constructor
+    public HistoryActivityAdapter(Context mContext, ArrayList<String> imgName, ArrayList<byte[]> imgByte) {
+        this.mContext = mContext;
+        this.imgName = imgName;
+        this.imgByte = imgByte;
     }
 
     @NonNull
     @Override
-    public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-       View v = LayoutInflater.from(mContext).inflate(R.layout.image_item, parent, false);
-        return new ImageViewHolder(v);
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(mContext).inflate(R.layout.image_item, parent, false);
+       return new MyViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
-        UploadImage uploadCurrent = mUploads.get(position);
-        holder.textViewName.setText(uploadCurrent.getImageName());
-        //StorageReference gsReference = storage.getReferenceFromUrl(uploadCurrent.getImageUrl());
-
-        // ---------------- WAY 1 USING GLIDE   -------------//
-        //Glie is open source code for firebase. being used in firebase documentation.
-        Glide.with(mContext)
-                .load(uploadCurrent.getImageUrl())
-                .into(holder.imageView);
-
-        /*
-        // ----------------------------    SECOND WAY - USING PICASSO    ----------- //
-        // working perfectly as well. picasso was used to present the photo from the phone to the screen.
-        Picasso.with(mContext)
-                .load(uploadCurrent.getImageUrl())
-                .fit()
-                .centerInside()
-                .into(holder.imageView);
-         */
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        //fore each index wewill show the titel and the image.
+        holder.textViewName.setText(String.valueOf(imgName.get(position)));
+        try {
+            //needs to be in try and catch for some reason.
+            holder.imageView.setImageBitmap(byte2Bitmap(imgByte.get(position)) );
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
+
 
     @Override
     public int getItemCount() {
-        return mUploads.size();
+        return imgName.size();
     }
 
-    public class ImageViewHolder extends RecyclerView.ViewHolder{
+    //my view holder class
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+
         public TextView textViewName;
         public ImageView imageView;
 
-        public ImageViewHolder(@NonNull View itemView) {
+        //constructor
+        public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.text_view_name);
             imageView = itemView.findViewById(R.id.image_view_upload);
-
         }
+    }
+
+    //making the byte[] information as is saved in the DB to bitmap (image).
+    public Bitmap byte2Bitmap(byte[] imgbyte) throws SQLException {
+        Bitmap bitmap = null;
+        bitmap = BitmapFactory.decodeByteArray(imgbyte, 0, imgbyte.length);
+        return bitmap;
     }
 }
