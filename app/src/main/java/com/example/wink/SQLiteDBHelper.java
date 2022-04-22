@@ -23,12 +23,14 @@ import java.sql.Blob;
 public class SQLiteDBHelper extends SQLiteOpenHelper {
 
 
+    //was created using https://www.youtube.com/watch?v=RGzblJuat1M&list=PLSrm9z4zp4mGK0g_0_jxYGgg3os9tqRUQ&index=2
 
     //for DB purpeses.
     private static final String TAG = "LOCAL DB: ";
     private Context context;
     public static final String DATABASE_NAME = "WinksDB.db";
     public static final int DATABASE_VERSION = 1;
+
 
     public static final String TABLE_NAME = "my_winks";
     public static final String COLUMN_ID = "_id";
@@ -133,6 +135,19 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
             cursor = db.rawQuery(query, null);
         }
         return cursor;
+    }
+
+
+    public Boolean isInLocalDB(String noteId){
+        String Query = "Select * from " + TABLE_NAME + " where " + SQLiteDBHelper.COLUMN_ID + " = " + "'" + noteId + "'";
+        SQLiteDatabase database = this.getReadableDatabase();
+        Cursor cursor = database.rawQuery(Query, null);
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
     }
 
 }

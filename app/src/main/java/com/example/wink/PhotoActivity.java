@@ -42,8 +42,9 @@ import java.net.URI;
 public class PhotoActivity extends AppCompatActivity {
 
 
-    //using this videos:
+    //uploading to firebase using using this videos:
     //https://www.youtube.com/watch?v=MfCiiTEwt3g&list=PLrnPJCHvNZuB_7nB5QD-4bNg6tpdEUImQ
+    //uploading to local DB using https://www.youtube.com/watch?v=RGzblJuat1M&list=PLSrm9z4zp4mGK0g_0_jxYGgg3os9tqRUQ&index=2
 
 
 
