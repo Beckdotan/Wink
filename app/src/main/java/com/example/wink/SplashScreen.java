@@ -65,5 +65,10 @@ public class SplashScreen extends AppCompatActivity {
             startForegroundService(serviceIntent);
         }
 
+
+
+
     }
+
+
 }
