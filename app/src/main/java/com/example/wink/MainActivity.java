@@ -1,5 +1,7 @@
 package com.example.wink;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,13 +19,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.example.tutorialspoint7.myapplication.GPSTracker;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
-import android.app.Activity;
-import android.os.Bundle;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -41,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient mfusedLocationProviderClient;
 
 
-    GPSTracker gps;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -76,7 +76,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         //for location:
-        getDeviceLocation();
+        btnShowLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                getDeviceLocation();
+                Log.i(TAG, "onClick: we have permission " + mLastKnownLocation);
+            }
+        });
+
     }
 
 
@@ -106,6 +114,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void getDeviceLocation() {
         try {
+            getLocationPermission();
+            Log.i(TAG, "getDeviceLocation " + mLocationPermissionGranted);
             if (mLocationPermissionGranted) {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     Task locationResult = mfusedLocationProviderClient.getLastLocation();
