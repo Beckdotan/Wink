@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        /*
         //check for new things in DB.
 
         final ArrayList<UploadImage> notes = new ArrayList<>();
@@ -151,6 +152,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
+         */
 
 
 

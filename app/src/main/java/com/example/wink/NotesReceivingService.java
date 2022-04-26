@@ -1,5 +1,6 @@
 package com.example.wink;
 
+import static android.content.ContentValues.TAG;
 import static com.example.wink.SQLiteDBHelper.TABLE_NAME;
 
 import android.app.Notification;
@@ -65,11 +66,8 @@ public class NotesReceivingService extends Service {
 
                 //hardcoded marker for tests
         /*
-        LatLng sydney = new LatLng(37.4244618058266, -122.08005726358829);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Dotan Beck"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.setOnMarkerClickListener(this);
-        */
+
+
         ArrayList<UploadImage> notes = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://wink-e1b43-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference("Images/").push();
@@ -79,6 +77,7 @@ public class NotesReceivingService extends Service {
                 ///preparing list from all relevant notes from servers in a list
 
                 //getting refrense to firebase realtime db.
+
         Log.e("Service", "Notes Reciving service is running ....  ");
                 myRef.addValueEventListener(new ValueEventListener() {
                     @Override
@@ -127,6 +126,80 @@ public class NotesReceivingService extends Service {
                 CHANNEL_ID,
                 NotificationManager.IMPORTANCE_LOW
                 );
+
+
+         */
+//check for new things in DB.
+
+        final ArrayList<UploadImage> notes = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://wink-e1b43-default-rtdb.europe-west1.firebasedatabase.app/");
+        DatabaseReference myRef = database.getReference("Images");
+
+        //getting lists of Notes and making marker from each one of them and present the markers.
+        //setting up listener
+        ///preparing list from all relevant notes from servers in a list
+
+        //getting refrense to firebase realtime db.
+        Log.e("Main Activity ", "Notes Reciving service is running ....  ");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("Service", "ON DATA CHANGE  ");
+                notes.clear();
+                Log.e("Service", "ON DATA CHANGE after clear ");
+
+                for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
+                    Log.e("Service", "ON DATA CHANGE in for  ");
+                    try {
+                        String name = noteSnapshot.child("imageName").getValue().toString();
+                        Log.e(TAG, "onDataChange: name = " +  name );
+                        String path = noteSnapshot.child("imagePath").getValue().toString();
+                        Log.e(TAG, "onDataChange: path = " + path );
+                        String id = noteSnapshot.child("id").getValue().toString();
+                        Log.e(TAG, "onDataChange: id = " +  id );
+                        UploadImage currentNote =new UploadImage(name, path, id);
+                        Log.i(TAG, "onDataChange: " + noteSnapshot.getValue().toString());
+                        notes.add(currentNote);
+                        Log.e("onDataChange", "added" + currentNote.getId());
+                    } catch (Exception e) { //might happen if we dont add proper notes to the DB.
+                        Log.e("DB to UploadImg", "something went wrong with converting DB to Notes" + e);
+                    }
+                }
+                //adding note from a list to the local DB.
+                try {
+                    for (UploadImage note : notes) {
+                        Log.i("note list", "now checking " + note.getId());
+
+                        SQLiteDBHelper myDB = new SQLiteDBHelper(NotesReceivingService.this);
+                        //TODO: !!!!! check if its fore this user as well after implementing users verification
+                        if (!myDB.isInLocalDB(note.getId())) {
+                            Log.e("Note Receive Service", "This not " + note.getId() + "is not in DB");
+                            myDB.addImg(note.getId(), note);
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e("On Data Change", "error", e);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: error reading from firebase");
+            }
+        });
+
+
+
+
+
+        final String CHANNEL_ID = "Notes Receiving FS ID";
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                CHANNEL_ID,
+                NotificationManager.IMPORTANCE_LOW
+        );
+
+
 
 
         getSystemService(NotificationManager.class).createNotificationChannel(channel);
