@@ -140,7 +140,7 @@ public class NotesReceivingService extends Service {
         ///preparing list from all relevant notes from servers in a list
 
         //getting refrense to firebase realtime db.
-        Log.e("Main Activity ", "Notes Reciving service is running ....  ");
+        Log.e("Service ", "Notes Reciving service is running ....  ");
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -152,17 +152,22 @@ public class NotesReceivingService extends Service {
                     Log.e("Service", "ON DATA CHANGE in for  ");
                     try {
                         String name = noteSnapshot.child("imageName").getValue().toString();
-                        Log.e(TAG, "onDataChange: name = " +  name );
                         String path = noteSnapshot.child("imagePath").getValue().toString();
-                        Log.e(TAG, "onDataChange: path = " + path );
                         String id = noteSnapshot.child("id").getValue().toString();
-                        Log.e(TAG, "onDataChange: id = " +  id );
+                        /*
+                        //for debugging
+                        Log.i(TAG, "onDataChange: path = " + path );
+                        Log.i(TAG, "onDataChange: id = " +  id );
+                        Log.i(TAG, "onDataChange: name = " +  name );
+
+                         */
                         UploadImage currentNote =new UploadImage(name, path, id);
+
                         Log.i(TAG, "onDataChange: " + noteSnapshot.getValue().toString());
                         notes.add(currentNote);
-                        Log.e("onDataChange", "added" + currentNote.getId());
+                        Log.i("onDataChange", "added " + currentNote.getId());
                     } catch (Exception e) { //might happen if we dont add proper notes to the DB.
-                        Log.e("DB to UploadImg", "something went wrong with converting DB to Notes" + e);
+                        Log.i("DB to UploadImg", "something went wrong with converting DB to Notes" + e);
                     }
                 }
                 //adding note from a list to the local DB.
