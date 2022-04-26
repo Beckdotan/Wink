@@ -23,8 +23,13 @@ import android.widget.Toast;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -84,6 +89,73 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "onClick: we have permission " + mLastKnownLocation);
             }
         });
+
+
+        //check for new things in DB.
+
+        final ArrayList<UploadImage> notes = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://wink-e1b43-default-rtdb.europe-west1.firebasedatabase.app/");
+        DatabaseReference myRef = database.getReference("Images");
+
+        //getting lists of Notes and making marker from each one of them and present the markers.
+        //setting up listener
+        ///preparing list from all relevant notes from servers in a list
+
+        //getting refrense to firebase realtime db.
+        Log.e("Main Activity ", "Notes Reciving service is running ....  ");
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("Service", "ON DATA CHANGE  ");
+                notes.clear();
+                Log.e("Service", "ON DATA CHANGE after clear ");
+
+                for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
+                    Log.e("Service", "ON DATA CHANGE in for  ");
+                    try {
+                        String name = noteSnapshot.child("imageName").getValue().toString();
+                        Log.e(TAG, "onDataChange: name = " +  name );
+                        String path = noteSnapshot.child("imagePath").getValue().toString();
+                        Log.e(TAG, "onDataChange: path = " + path );
+                        String id = noteSnapshot.child("id").getValue().toString();
+                        Log.e(TAG, "onDataChange: id = " +  id );
+                        UploadImage currentNote =new UploadImage(name, path, id);
+                        Log.i(TAG, "onDataChange: " + noteSnapshot.getValue().toString());
+                        notes.add(currentNote);
+                        Log.e("onDataChange", "added" + currentNote.getId());
+                    } catch (Exception e) { //might happen if we dont add proper notes to the DB.
+                        Log.e("DB to UploadImg", "something went wrong with converting DB to Notes" + e);
+                    }
+                }
+                //adding markers from a list to the map.
+                try {
+                    for (UploadImage note : notes) {
+                        Log.i("note list", "now checking " + note.getId());
+
+                        SQLiteDBHelper myDB = new SQLiteDBHelper(MainActivity.this);
+                        //TODO: !!!!! check if its fore this user as well after implementing users verification
+                        if (!myDB.isInLocalDB(note.getId())) {
+                            Log.e("Note Receive Service", "This not " + note.getId() + "is not in DB");
+                            myDB.addImg(note.getId(), note);
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e("On Data Change", "error", e);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.i(TAG, "onCancelled: error reading from firebase");
+            }
+        });
+
+
+
+
+
+
+
 
     }
 

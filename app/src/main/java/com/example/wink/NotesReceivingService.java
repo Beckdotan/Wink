@@ -71,7 +71,7 @@ public class NotesReceivingService extends Service {
         mMap.setOnMarkerClickListener(this);
         */
         ArrayList<UploadImage> notes = new ArrayList<>();
-        FirebaseDatabase database = FirebaseDatabase.getInstance("https://wink-e1b43-default-rtdb.europe-west1.firebasedatabase.app");
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://wink-e1b43-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference("Images/").push();
 
                 //getting lists of Notes and making marker from each one of them and present the markers.

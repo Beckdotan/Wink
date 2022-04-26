@@ -62,7 +62,7 @@ public class SplashScreen extends AppCompatActivity {
         //if there is no such service than creat one, otherwise dont do anything.
         if (!alreadyExists){
             Intent serviceIntent = new Intent(SplashScreen.this, NotesReceivingService.class);
-            startForegroundService(serviceIntent);
+            //startForegroundService(serviceIntent);
         }
 
 

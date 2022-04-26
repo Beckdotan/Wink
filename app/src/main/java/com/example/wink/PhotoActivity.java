@@ -59,6 +59,7 @@ public class PhotoActivity extends AppCompatActivity {
 
     private FirebaseStorage storage;
     private StorageReference mStorageRef;
+    private DatabaseReference mDatabase;
     private StorageTask mUploadTask;
     public String ImgURL;
 
@@ -84,6 +85,7 @@ public class PhotoActivity extends AppCompatActivity {
 
         storage = FirebaseStorage.getInstance();
         mStorageRef = storage.getReference("uploads");
+        mDatabase = FirebaseDatabase.getInstance().getReference("Images");
      //   mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
 
 
@@ -177,6 +179,7 @@ public class PhotoActivity extends AppCompatActivity {
                             Log.i("Upload Image", "onSuccess: " + ImgURL);
                             //saving the Image and matadata to realtime DB
                             String key = saveImageInDB(upload);
+                            Log.i("Upload Image", "onSuccess: key " +key);
 
                             //if in realtime DB:
                             if (key == "0"){ // if failed in DB
@@ -269,6 +272,8 @@ public class PhotoActivity extends AppCompatActivity {
             //getting the new key from DB
             String key = myRef.getKey();
 
+            //setting the key as param
+            img.setId(key);
             //sending img to DB
             myRef.setValue(img);
             Log.i("saveNoteInDB", "saved in DB! :)");
