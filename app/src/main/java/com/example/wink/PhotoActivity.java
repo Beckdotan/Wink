@@ -17,17 +17,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -52,6 +55,7 @@ public class PhotoActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST =1;
     private Button mButtonChooseImage;
     private Button mButtonUpload;
+    private Button mSend;
     private EditText mImageTitel;
     private ImageView mImageView;
     private ProgressBar mProgressBar;
@@ -79,6 +83,7 @@ public class PhotoActivity extends AppCompatActivity {
 
         mButtonChooseImage = findViewById(R.id.choose_image);
         mButtonUpload = findViewById(R.id.image_upload);
+        mSend = findViewById(R.id.send_button);
         mImageTitel = findViewById(R.id.image_titel_text);
         mImageView = findViewById(R.id.image_view);
         mProgressBar = findViewById(R.id.progress_bar);
@@ -87,6 +92,37 @@ public class PhotoActivity extends AppCompatActivity {
         mStorageRef = storage.getReference("uploads");
         mDatabase = FirebaseDatabase.getInstance().getReference("Images");
      //   mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads");
+
+
+        //creating bottom sheet:
+        mSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Bottom shhet dialog was created using:  https://www.youtube.com/watch?v=hfoXhiMTc0c
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
+                        PhotoActivity.this, R.style.BottomSheetDialogTheme
+                );
+                View bottomSheetView = LayoutInflater.from(getApplicationContext())
+                        .inflate(
+                                R.layout.upload_image_bottom_sheet_layout,
+                                (LinearLayout) findViewById(R.id.uploadImageBottomSheetContainer)
+                        );
+                bottomSheetView.findViewById(R.id.schedule_button).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Schedule the message.
+                        //TODO: schedual the meesege, add time to the DB and make sure its syncs properly.
+
+                        Toast.makeText(PhotoActivity.this,  "Pressed on Schedule", Toast.LENGTH_SHORT).show();
+                        bottomSheetDialog.dismiss();
+                    }
+                });
+                bottomSheetDialog.setContentView(bottomSheetView);
+                bottomSheetDialog.show();
+            }
+        });
+
+
 
 
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {

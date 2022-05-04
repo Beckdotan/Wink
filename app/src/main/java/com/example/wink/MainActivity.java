@@ -9,6 +9,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -35,6 +39,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     Button mPhotoHistory;
     Button mPhotoActivity;
+    Button  mNotificationButton;
 
 
     //for location
@@ -54,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        createNotificationChannel();
 
         //cosmetics for splash screen
         getSupportActionBar().hide();
@@ -61,6 +67,35 @@ public class MainActivity extends AppCompatActivity {
         mPhotoHistory = (Button) findViewById(R.id.photoHistory);
         mPhotoActivity = (Button) findViewById(R.id.photo_activity);
         btnShowLocation = (Button) findViewById(R.id.button);
+        mNotificationButton = (Button) findViewById(R.id.notification_button);
+
+
+        mNotificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // alarm manager was made using : https://www.youtube.com/watch?v=nl-dheVpt8o
+                /*
+                TODO: adding the time and the actual Text, add id value set a click function to take me to the correct messege.  and sync it to the DB everytime that new messege comse.
+
+                 */
+                Toast.makeText(MainActivity.this, "button pressed", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, NotificationBroadcastReciver.class);
+                PendingIntent  pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+
+
+                AlarmManager alarmManager  = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+                long timeAtButtonClick = System.currentTimeMillis();
+                long  tenSecondsInMillis = 1000* 10;
+
+                alarmManager.set(AlarmManager.RTC_WAKEUP,
+                        timeAtButtonClick+tenSecondsInMillis,
+                        pendingIntent);
+
+
+
+            }
+        });
 
         mPhotoHistory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,6 +247,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }catch (SecurityException e){
             Log.e("Exception : $s", e.getMessage());
+        }
+    }
+
+    private void createNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            CharSequence name = "winkNotificationChannel";
+            String discription = "Channel for Wink Notifications";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NotificationBroadcastReciver.notificationChannel, name, importance);
+            channel.setDescription(discription);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
         }
     }
 
