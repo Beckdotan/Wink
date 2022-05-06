@@ -53,7 +53,7 @@ public class RecivedNoteActivity extends AppCompatActivity {
                     cursor.moveToPrevious();
                     byteImg = cursor.getBlob(3);
                 }
-                
+                q.remove(0);
                 if (byteImg == null){
                     Log.i(TAG, "onCreate: ITS NULL");
                 }
@@ -66,18 +66,6 @@ public class RecivedNoteActivity extends AppCompatActivity {
                     throwables.printStackTrace();
                 }
 
-
-
-
-
-                /*
-                try {
-                    imageView.setImageBitmap(HistoryActivityAdapter.byte2Bitmap(byteImg));
-                } catch (SQLException throwables) {
-                    throwables.printStackTrace();
-                }
-                
-                 */
 
             }
 
