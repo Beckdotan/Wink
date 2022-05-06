@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     Button mPhotoHistory;
     Button mPhotoActivity;
     Button  mNotificationButton;
+    Button  mRecivedNote;
 
 
     //for location
@@ -68,7 +69,15 @@ public class MainActivity extends AppCompatActivity {
         mPhotoActivity = (Button) findViewById(R.id.photo_activity);
         btnShowLocation = (Button) findViewById(R.id.button);
         mNotificationButton = (Button) findViewById(R.id.notification_button);
+        mRecivedNote = (Button) findViewById(R.id.received_note_button);
 
+        mRecivedNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, RecivedNoteActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mNotificationButton.setOnClickListener(new View.OnClickListener() {
             @Override

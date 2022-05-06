@@ -74,7 +74,7 @@ public class HistoryActivityAdapter extends RecyclerView.Adapter<HistoryActivity
     }
 
     //making the byte[] information as is saved in the DB to bitmap (image).
-    public Bitmap byte2Bitmap(byte[] imgbyte) throws SQLException {
+    public static Bitmap byte2Bitmap(byte[] imgbyte) throws SQLException {
         Bitmap bitmap = null;
         bitmap = BitmapFactory.decodeByteArray(imgbyte, 0, imgbyte.length);
         return bitmap;

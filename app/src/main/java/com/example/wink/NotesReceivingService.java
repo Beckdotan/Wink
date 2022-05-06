@@ -28,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 //// ----------------------
 // was done using this guide: https://www.youtube.com/watch?v=bA7v1Ubjlzw
@@ -192,7 +193,7 @@ public class NotesReceivingService extends Service {
                         if (!myDB.isInLocalDB(note.getId())) {
                             Log.i("Note Receive Service", "Added his note " + note.getId() + "to Local DB");
                             myDB.addImg(note.getId(), note);
-                            setNotificationInTime(note.getShowTimeInMillis());
+                            setNotificationInTime(note.getShowTimeInMillis(), note.getId());
                         }
                     }
                 } catch (Exception e) {
@@ -240,7 +241,7 @@ public class NotesReceivingService extends Service {
         return null;
     }
 
-    public void setNotificationInTime(String timeString){
+    public void setNotificationInTime(String timeString, String id){
         alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, NotificationBroadcastReciver.class);
         pendingIntent = PendingIntent.getBroadcast(this, 0 , intent, 0);
@@ -251,11 +252,30 @@ public class NotesReceivingService extends Service {
                 timeforsend,
                 pendingIntent);
 
+
         Log.i(TAG, "setNotificationInTime: ALARM SET SUCCESSFULLY");
+
+        //adding the image details that needed to the q in the right order.
+        addImgToQ(id, Long.parseLong(timeString));
+
 
     }
 
+    private void addImgToQ(String id, long time) {
+        LinkedListNode node = new LinkedListNode(id, time);
 
+        if (RecivedNoteActivity.q.isEmpty()){
+            RecivedNoteActivity.q.add(node);
+        }else{
+            int counter = 0;
+            Iterator iterator = RecivedNoteActivity.q.iterator();
+            while(iterator.hasNext() && ((LinkedListNode) iterator.next()).getTimeInMillis() < time){
+                counter ++;
+            }
+            RecivedNoteActivity.q.add(counter, node);
+        }
+        Log.i(TAG, "setNotificationInTime: the node was added to the q");
+    }
 
 
 }
