@@ -33,9 +33,10 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="363dp"
         android:layout_height="20dp"
+        android:layout_marginTop="580dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="587dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/image_view"
