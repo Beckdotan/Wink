@@ -38,6 +38,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_LINK = "img_link";
     public static final String COLUMN_SHOWED = "was_showed"; // will be 0 for no and 1 for yes.
     public static final String IMG  = "img";
+    public static final String SHOW_TIME = "show_time"; // will be treated as String
 
     //other things
 
@@ -62,7 +63,8 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
                         COLUMN_TITLE +  " TEXT, " +
                         COLUMN_LINK +  " TEXT, " +
                         IMG + " BLOB, " +
-                        COLUMN_SHOWED + " INTEGER);";
+                        COLUMN_SHOWED + " INTEGER, " +
+                        SHOW_TIME + " TEXT); ";
         db.execSQL(query);
     }
 
@@ -103,6 +105,8 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
                 cv.put(COLUMN_LINK, uploadImage.getImageUrl());
                 cv.put(COLUMN_SHOWED, uploadImage.getWasShown());
                 cv.put(IMG, currentImg);
+                Log.e(TAG, "onLoadingComplete: " + uploadImage.getShowTimeInMillis());
+                cv.put(SHOW_TIME, (uploadImage.getShowTimeInMillis() + "")); // getting the time in millis as String;
 
                 //checking if succeeded.
                 long result = db.insert(TABLE_NAME,null, cv);

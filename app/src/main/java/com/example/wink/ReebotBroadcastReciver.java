@@ -8,6 +8,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 //// ----------------------
+// this make sure that even if th phone being rebooted it will start the notification syncing service as well.
 // was done using this guide: https://www.youtube.com/watch?v=bA7v1Ubjlzw
 //// ----------------------
 

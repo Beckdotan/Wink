@@ -31,6 +31,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -41,6 +43,7 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.net.URI;
+import java.util.Calendar;
 
 public class PhotoActivity extends AppCompatActivity {
 
@@ -67,6 +70,9 @@ public class PhotoActivity extends AppCompatActivity {
     private StorageTask mUploadTask;
     public String ImgURL;
 
+
+    private MaterialTimePicker picker;
+    private Calendar calendar;
 
 
 
@@ -98,7 +104,7 @@ public class PhotoActivity extends AppCompatActivity {
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Bottom shhet dialog was created using:  https://www.youtube.com/watch?v=hfoXhiMTc0c
+                //Bottom sheet dialog was created using:  https://www.youtube.com/watch?v=hfoXhiMTc0c
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(
                         PhotoActivity.this, R.style.BottomSheetDialogTheme
                 );
@@ -112,6 +118,9 @@ public class PhotoActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         //Schedule the message.
                         //TODO: schedual the meesege, add time to the DB and make sure its syncs properly.
+                        ShowTimePicker();
+
+
 
                         Toast.makeText(PhotoActivity.this,  "Pressed on Schedule", Toast.LENGTH_SHORT).show();
                         bottomSheetDialog.dismiss();
@@ -151,6 +160,37 @@ public class PhotoActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void ShowTimePicker() {
+
+       picker = new MaterialTimePicker.Builder()
+                .setTimeFormat(TimeFormat.CLOCK_12H)
+                .setHour(12)
+                .setMinute(10)
+                .setTitleText("Select Notification Time")
+                .build();
+       picker.show(getSupportFragmentManager(), "timePicker");
+
+       picker.addOnPositiveButtonClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               calendar = Calendar.getInstance();
+               calendar.set(Calendar.HOUR_OF_DAY, picker.getHour());
+               calendar.set(Calendar.MINUTE, picker.getMinute());
+               calendar.set(Calendar.SECOND, 0);
+               calendar.set(Calendar.MILLISECOND, 0);
+
+               if (mUploadTask != null && mUploadTask.isInProgress()){
+                   Toast.makeText(PhotoActivity.this, "Upload In Progress", Toast.LENGTH_SHORT).show();
+               }else {
+                   uploadFile();
+               }
+
+           }
+
+       });
+
     }
 
     //  creating new activity for the image choose window.
@@ -213,6 +253,10 @@ public class PhotoActivity extends AppCompatActivity {
                             // --------------    FIRST WORKING WAY    -------------
                             UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(),  fileReference.getPath());
                             Log.i("Upload Image", "onSuccess: " + ImgURL);
+
+                            //updating the showTime in upload.
+                            upload.setShowTimeInMillis(calendar.getTimeInMillis() + "");
+
                             //saving the Image and matadata to realtime DB
                             String key = saveImageInDB(upload);
                             Log.i("Upload Image", "onSuccess: key " +key);

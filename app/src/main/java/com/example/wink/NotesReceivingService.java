@@ -149,19 +149,25 @@ public class NotesReceivingService extends Service {
                 Log.e("Service", "ON DATA CHANGE after clear ");
 
                 for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
-                    Log.e("Service", "ON DATA CHANGE in for  ");
+
+                    Log.e("Service", "ON DATA CHANGE in for  " + noteSnapshot.child("id").getValue().toString() );
                     try {
                         String name = noteSnapshot.child("imageName").getValue().toString();
                         String path = noteSnapshot.child("imagePath").getValue().toString();
                         String id = noteSnapshot.child("id").getValue().toString();
+                        String showTime = noteSnapshot.child("showTimeInMillis").getValue().toString();
+
+
+
                         /*
                         //for debugging
                         Log.i(TAG, "onDataChange: path = " + path );
                         Log.i(TAG, "onDataChange: id = " +  id );
                         Log.i(TAG, "onDataChange: name = " +  name );
-
+                        //UploadImage currentNote =new UploadImage(name, path, id, "0");
                          */
-                        UploadImage currentNote =new UploadImage(name, path, id);
+
+                        UploadImage currentNote =new UploadImage(name, path, id, showTime);
 
                         Log.i(TAG, "onDataChange: " + noteSnapshot.getValue().toString());
                         notes.add(currentNote);

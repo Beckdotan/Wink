@@ -6,6 +6,7 @@ public class UploadImage {
     private String imageURL;
     private String id;
     private int wasShown;
+    private String showTimeInMillis;
 
 
 
@@ -35,6 +36,8 @@ public class UploadImage {
         this.imageURL = "https://storage.googleapis.com/wink-e1b43.appspot.com"+path;
         this.wasShown = 0;
         this.id = "";
+        showTimeInMillis = "0";
+
     }
 
 
@@ -47,9 +50,22 @@ public class UploadImage {
         this.imageURL = "https://storage.googleapis.com/wink-e1b43.appspot.com"+path;
         this.wasShown = 0;
         this.id = id;
+        this.showTimeInMillis = "0";
     }
 
-    public UploadImage(int wasShown, String name, String path, String url, String id){
+    public UploadImage(String name, String path,String id, String time){
+        if (name.trim().equals("")){
+            name = "NO NAME";
+        }
+        this.imageName = name;
+        this.imagePath = path;
+        this.imageURL = "https://storage.googleapis.com/wink-e1b43.appspot.com"+path;
+        this.wasShown = 0;
+        this.id = id;
+        this.showTimeInMillis = time;
+    }
+
+    public UploadImage(int wasShown, String name, String path, String url, String id, String time){
         if (name.trim().equals("")){
             name = "NO NAME";
         }
@@ -58,38 +74,43 @@ public class UploadImage {
         this.imageURL = url;
         this.wasShown = wasShown;
         this.id = id;
+        this.showTimeInMillis = time;
     }
 
     //Getters
 
     public String getImageName(){
-        return imageName;
+        return this.imageName;
     }
 
     public String getImageUrl(){
-        return imageURL;
+        return this.imageURL;
     }
 
     public String getImagePath() {
-        return imagePath;
+        return this.imagePath;
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public int getWasShown() {
-        return wasShown;
+        return this.wasShown;
+    }
+
+    public String getShowTimeInMillis() {
+        return this.showTimeInMillis;
     }
 
     //Setters
     public void setImageName(String name){
-        imageName = name;
+        this.imageName = name;
 
     }
 
     public void setImagePath(String path){
-        imagePath = path;
+        this.imagePath = path;
     }
 
     public void setId(String id) {
@@ -100,6 +121,10 @@ public class UploadImage {
         this.wasShown = was_shown;
     }
 
+    public void setShowTimeInMillis(String showTimeInMillis) {
+        this.showTimeInMillis = showTimeInMillis;
+    }
+
     public void print(){
 
 
@@ -108,6 +133,7 @@ public class UploadImage {
         System.out.println("imageURL = " + this.getImageUrl());
         System.out.println("id = " + this.getId());
         System.out.println("wasShown = " + this.getWasShown());
+        System.out.println("Time In Millis = " + this.getShowTimeInMillis());
 
 
     }
