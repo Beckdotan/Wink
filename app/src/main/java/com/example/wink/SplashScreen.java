@@ -73,20 +73,7 @@ public class SplashScreen extends AppCompatActivity {
 
     }
 
-    public void setNotificationInTime(String timeString){
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(SplashScreen.this, NotificationBroadcastReciver.class);
-        pendingIntent = PendingIntent.getBroadcast(SplashScreen.this, 0 , intent, 0);
 
-        long timeforsend = Long.parseLong(timeString);
-
-        alarmManager.set(AlarmManager.RTC_WAKEUP,
-                timeforsend,
-                pendingIntent);
-
-        Log.i(TAG, "setNotificationInTime: ALARM SET SUCCESSFULLY");
-
-    }
 
 
 

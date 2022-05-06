@@ -2,10 +2,13 @@ package com.example.wink;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,6 +22,7 @@ public class RecivedNoteActivity extends AppCompatActivity {
     public static LinkedList<LinkedListNode> q = new LinkedList<LinkedListNode>();
     private ImageView imageView;
     SQLiteDBHelper myLocalDB;
+    private Button xButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +32,22 @@ public class RecivedNoteActivity extends AppCompatActivity {
         //cosmetics for splash screen
         getSupportActionBar().hide();
 
-
+        xButton = (Button) findViewById(R.id.x_button);
         imageView = findViewById(R.id.imageView);
         myLocalDB = new SQLiteDBHelper(this);
+
+
+
+        xButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RecivedNoteActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+
 
         Cursor cursor = myLocalDB.readAllData();
         Log.i(TAG, "onCreate: " + q.toString());

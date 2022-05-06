@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wink">
         <activity
+            android:name=".AfterSendActivity"
+            android:exported="false" />
+        <activity
             android:name=".RecivedNoteActivity"
             android:exported="false" />
         <activity

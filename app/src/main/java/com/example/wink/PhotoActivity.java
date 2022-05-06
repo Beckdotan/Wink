@@ -55,11 +55,8 @@ public class PhotoActivity extends AppCompatActivity {
     //uploading to local DB using https://www.youtube.com/watch?v=RGzblJuat1M&list=PLSrm9z4zp4mGK0g_0_jxYGgg3os9tqRUQ&index=2
 
 
-
-
     private static final int PICK_IMAGE_REQUEST =1;
     private Button mButtonChooseImage;
-    private Button mButtonUpload;
     private Button mSend;
     private EditText mImageTitel;
     private ImageView mImageView;
@@ -80,20 +77,18 @@ public class PhotoActivity extends AppCompatActivity {
 
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i( "PhotoActivity","created activity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
 
-        //cosmetics for splash screen
+        //cosmetics -- heading the header
         getSupportActionBar().hide();
 
 
         mButtonChooseImage = findViewById(R.id.choose_image);
-        mButtonUpload = findViewById(R.id.image_upload);
+
         mSend = findViewById(R.id.send_button);
         mImageTitel = findViewById(R.id.image_titel_text);
         mImageView = findViewById(R.id.image_view);
@@ -121,13 +116,8 @@ public class PhotoActivity extends AppCompatActivity {
                 bottomSheetView.findViewById(R.id.schedule_button).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //Schedule the message.
-                        //TODO: schedual the meesege, add time to the DB and make sure its syncs properly.
+                        //Schedule the message and sending it.
                         ShowTimePicker();
-
-
-
-                        Toast.makeText(PhotoActivity.this,  "Pressed on Schedule", Toast.LENGTH_SHORT).show();
                         bottomSheetDialog.dismiss();
                     }
                 });
@@ -153,19 +143,16 @@ public class PhotoActivity extends AppCompatActivity {
             }
         });
 
-        mButtonUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i( "PhotoActivity","clicked on buttonUpload");
-                //checking if already uploading. if there is uplading procces keep doing it and dont do any more. else, upload.
-                if (mUploadTask != null && mUploadTask.isInProgress()){
-                    Toast.makeText(PhotoActivity.this, "Upload In Progress", Toast.LENGTH_SHORT).show();
-                }else {
-                    uploadFile();
-                }
-            }
-        });
+
     }
+
+
+
+    // -----------------------------------------------
+
+    //                FUNCTIONS
+
+    // -----------------------------------------------
 
     private void ShowTimePicker() {
 
@@ -198,6 +185,8 @@ public class PhotoActivity extends AppCompatActivity {
 
     }
 
+    // -----------------------------------------------
+
     //  creating new activity for the image choose window.
     ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -217,19 +206,25 @@ public class PhotoActivity extends AppCompatActivity {
                 }
             });
 
+    // -----------------------------------------------
 
     private void LoadImage(){
         Picasso.with(this).load(mImageUri).into(mImageView);
     }
+
+    // -----------------------------------------------
+
 
     //getting the file extension (.jpg / .png) and such.
     private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
-
-
     }
+
+    // -----------------------------------------------
+
+    //uplading the images to storage and creating new not in realtime db.
     private void uploadFile(){
         if (mImageUri != null){
             //uploading the image to storage with the name in milliseconds (thats how we use uniq name).
@@ -270,7 +265,9 @@ public class PhotoActivity extends AppCompatActivity {
                             if (key == "0"){ // if failed in DB
                                 Toast.makeText(PhotoActivity.this, "Upload was NOT successful", Toast.LENGTH_LONG).show();
                             } else { //if success in realtime DB
-                                Toast.makeText(PhotoActivity.this, "SAVED IN DB", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(PhotoActivity.this, AfterSendActivity.class);
+                                startActivity(intent);
+                                //Toast.makeText(PhotoActivity.this, "Great job! the note was sent!", Toast.LENGTH_LONG).show();
 
                                 /*
                                 //adding it to local DB:
@@ -279,49 +276,6 @@ public class PhotoActivity extends AppCompatActivity {
 
                                  */
                             }
-
-
-                            // --------------    SECOND WAY    -------------
-
-                            /*
-                            //- creating gs url: for example:
-                             //creating the im url
-                            StorageReference imgReference = storage.getReference("uploads/"+ imgName);
-                             UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(), imgReference.toString());
-                            Log.i("Upload Image", "onSuccess: " + upload.getImageUrl());
-                             */
-
-                            /*
-                            // ---------------   OTHER WAY    ---------
-                            //creating the real url
-                            StorageReference imgReference = storage.getReference("uploads/"+ imgName);
-
-                            //getting the download url
-                            imgReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    Log.i("getDownloadURL", "onSuccess: Download URL" + uri.toString());
-                                    ImgURL = uri.toString();
-                                    UploadImage upload = new UploadImage(mImageTitel.getText().toString().trim(), ImgURL);
-                                    Log.i("Upload Image", "onSuccess: " + ImgURL);
-                                   //saving the Image and matadata to realtime DB
-                                    String key = saveImageInDB(upload);
-
-                                    //if in realtime DB:
-                                    if (key == "0"){ // if failed in DB
-                                        Toast.makeText(PhotoActivity.this, "Upload was NOT successful", Toast.LENGTH_LONG).show();
-                                    } else{ //if success in realtime DB
-                                        Toast.makeText(PhotoActivity.this, "SAVED IN DB", Toast.LENGTH_LONG).show();
-
-                                        //adding it to local DB:
-                                        SQLiteDBHelper myDB = new SQLiteDBHelper(PhotoActivity.this);
-                                        myDB.addImg(key, upload);
-
-                                    }
-                                }
-                            });
-
-                             */
 
 
                         }
@@ -345,6 +299,8 @@ public class PhotoActivity extends AppCompatActivity {
 
         }
     }
+
+    // -----------------------------------------------
 
     //sending the img to DB.
     //if works - return the automatic key was given and send toast to user

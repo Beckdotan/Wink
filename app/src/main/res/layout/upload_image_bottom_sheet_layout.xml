@@ -43,12 +43,13 @@
         <TextView
             android:id="@+id/schedule_button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="44dp"
             android:layout_gravity="center"
-            android:text="Later"
-            android:textSize="15dp"
+            android:paddingTop="10dp"
             android:paddingLeft="10dp"
-            android:textColor="@color/black" />
+            android:text="Later"
+            android:textColor="@color/black"
+            android:textSize="15dp" />
 
 
     </LinearLayout>
