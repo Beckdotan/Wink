@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -73,6 +75,9 @@ public class PhotoActivity extends AppCompatActivity {
 
     private MaterialTimePicker picker;
     private Calendar calendar;
+
+
+
 
 
 
@@ -267,9 +272,12 @@ public class PhotoActivity extends AppCompatActivity {
                             } else { //if success in realtime DB
                                 Toast.makeText(PhotoActivity.this, "SAVED IN DB", Toast.LENGTH_LONG).show();
 
+                                /*
                                 //adding it to local DB:
                                 SQLiteDBHelper myDB = new SQLiteDBHelper(PhotoActivity.this);
                                 myDB.addImg(key, upload);
+
+                                 */
                             }
 
 
@@ -367,6 +375,8 @@ public class PhotoActivity extends AppCompatActivity {
         }
 
     }
+
+
 
 
 

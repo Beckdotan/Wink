@@ -4,18 +4,24 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import com.google.firebase.storage.FirebaseStorage;
 
 public class SplashScreen extends AppCompatActivity {
 
+    private static final String TAG = "Splash Screen";
     //handler for splashscreen
     Handler handler = new Handler();
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
 
 
 
@@ -65,10 +71,25 @@ public class SplashScreen extends AppCompatActivity {
             startForegroundService(serviceIntent);
         }
 
+    }
 
+    public void setNotificationInTime(String timeString){
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(SplashScreen.this, NotificationBroadcastReciver.class);
+        pendingIntent = PendingIntent.getBroadcast(SplashScreen.this, 0 , intent, 0);
 
+        long timeforsend = Long.parseLong(timeString);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP,
+                timeforsend,
+                pendingIntent);
+
+        Log.i(TAG, "setNotificationInTime: ALARM SET SUCCESSFULLY");
 
     }
+
+
+
 
 
 }

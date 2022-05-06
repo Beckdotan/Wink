@@ -3,10 +3,13 @@ package com.example.wink;
 import static android.content.ContentValues.TAG;
 import static com.example.wink.SQLiteDBHelper.TABLE_NAME;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -31,6 +34,10 @@ import java.util.ArrayList;
 //// ----------------------
 
 public class NotesReceivingService extends Service {
+
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -144,13 +151,12 @@ public class NotesReceivingService extends Service {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.e("Service", "ON DATA CHANGE  ");
+                Log.i("Service", "ON DATA CHANGE  ");
                 notes.clear();
-                Log.e("Service", "ON DATA CHANGE after clear ");
 
                 for (DataSnapshot noteSnapshot : dataSnapshot.getChildren()) {
 
-                    Log.e("Service", "ON DATA CHANGE in for  " + noteSnapshot.child("id").getValue().toString() );
+                    Log.i("Service", "ON DATA CHANGE in for  " + noteSnapshot.child("id").getValue().toString() );
                     try {
                         String name = noteSnapshot.child("imageName").getValue().toString();
                         String path = noteSnapshot.child("imagePath").getValue().toString();
@@ -184,8 +190,9 @@ public class NotesReceivingService extends Service {
                         SQLiteDBHelper myDB = new SQLiteDBHelper(NotesReceivingService.this);
                         //TODO: !!!!! check if its fore this user as well after implementing users verification
                         if (!myDB.isInLocalDB(note.getId())) {
-                            Log.e("Note Receive Service", "This not " + note.getId() + "is not in DB");
+                            Log.i("Note Receive Service", "Added his note " + note.getId() + "to Local DB");
                             myDB.addImg(note.getId(), note);
+                            setNotificationInTime(note.getShowTimeInMillis());
                         }
                     }
                 } catch (Exception e) {
@@ -231,6 +238,21 @@ public class NotesReceivingService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public void setNotificationInTime(String timeString){
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, NotificationBroadcastReciver.class);
+        pendingIntent = PendingIntent.getBroadcast(this, 0 , intent, 0);
+
+        long timeforsend = Long.parseLong(timeString);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP,
+                timeforsend,
+                pendingIntent);
+
+        Log.i(TAG, "setNotificationInTime: ALARM SET SUCCESSFULLY");
+
     }
 
 
