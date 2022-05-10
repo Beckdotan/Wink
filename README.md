@@ -1,6 +1,6 @@
 # Wink
 
-An android app that help couples to keet the fire going. 
+An android app that help couples to "keep the fire going". 
 We allow the coule communicate in a way they have never done before by sending beautiful "notes" to each other. 
 A note is like an instagram story (including pictures gif text drawing and more.
 
